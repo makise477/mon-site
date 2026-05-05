@@ -600,6 +600,56 @@
         .week-block {
           break-inside: avoid;
         }
+        .print-choice-overlay {
+          display: none !important;
+        }
+        body.print-week-mode .week-block:nth-of-type(n + 2) {
+          display: none !important;
+        }
+      }
+
+      .print-choice-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.72);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        z-index: 10050;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+      }
+      .print-choice-overlay.active {
+        opacity: 1;
+        pointer-events: all;
+      }
+      .print-choice-modal {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 1.5rem;
+        width: min(420px, 100%);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+      }
+      .print-choice-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+      .print-choice-title {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--gold);
+      }
+      .print-choice-buttons {
+        display: flex;
+        gap: 0.8rem;
+        flex-wrap: wrap;
       }
 
       /* TOAST */
@@ -922,7 +972,7 @@
         </button>
       </div>
       <div class="controls-right">
-        <button class="btn btn-secondary" onclick="window.print()">
+        <button class="btn btn-secondary" onclick="openPrintChoice()">
           Imprimer
         </button>
         <button class="btn btn-danger" onclick="clearMonth()">
@@ -960,6 +1010,26 @@
     </div>
 
     <main id="main"></main>
+
+    <div class="print-choice-overlay" id="printChoiceOverlay">
+      <div class="print-choice-modal">
+        <div class="print-choice-header">
+          <div class="print-choice-title">Choisir l’impression</div>
+          <button class="modal-close" onclick="closePrintChoice()">
+            &#215;
+          </button>
+        </div>
+        <p>Imprimer seulement une semaine ou tout le mois ?</p>
+        <div class="print-choice-buttons">
+          <button class="btn btn-secondary" onclick="startPrint('week')">
+            Imprimer une semaine
+          </button>
+          <button class="btn btn-primary" onclick="startPrint('month')">
+            Imprimer le mois
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- MODAL -->
     <div
@@ -1541,6 +1611,28 @@
         contact.classList.toggle("collapsed");
         const btn = contact.querySelector(".contact-toggle");
         btn.textContent = contact.classList.contains("collapsed") ? "+" : "−";
+      }
+
+      function openPrintChoice() {
+        document.getElementById("printChoiceOverlay").classList.add("active");
+      }
+
+      function closePrintChoice() {
+        document
+          .getElementById("printChoiceOverlay")
+          .classList.remove("active");
+      }
+
+      function startPrint(mode) {
+        document.body.classList.remove("print-week-mode", "print-month-mode");
+        if (mode === "week") {
+          document.body.classList.add("print-week-mode");
+        }
+        closePrintChoice();
+        setTimeout(() => {
+          window.print();
+          document.body.classList.remove("print-week-mode", "print-month-mode");
+        }, 100);
       }
 
       function collapseContactSection() {
