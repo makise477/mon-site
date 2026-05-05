@@ -783,6 +783,7 @@
         max-width: 300px;
         z-index: 500;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        transition: all 0.25s ease;
       }
 
       .contact-title {
@@ -1542,10 +1543,20 @@
         btn.textContent = contact.classList.contains("collapsed") ? "+" : "−";
       }
 
+      function collapseContactSection() {
+        const contact = document.getElementById("contactSection");
+        if (!contact.classList.contains("collapsed")) {
+          contact.classList.add("collapsed");
+          const btn = contact.querySelector(".contact-toggle");
+          if (btn) btn.textContent = "+";
+        }
+      }
+
       // =============================================
       // INIT
       // =============================================
       render();
+      setTimeout(collapseContactSection, 4000);
     </script>
   </body>
 </html>
